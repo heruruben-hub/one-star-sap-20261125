@@ -9,7 +9,7 @@
 // the plant into a cocktail garnish — the human treats it like a drink,
 // not a living thing.
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 
 const ENTRY =
@@ -28,4 +28,11 @@ if (ENTRY.trim().length === 0 || ENTRY.includes("\n")) {
 const outPath = "/output/entry.txt";
 mkdirSync(dirname(outPath), { recursive: true });
 writeFileSync(outPath, ENTRY + "\n", "utf8");
+
+// Read back and verify: the file the grader sees must be exactly the
+// entry we checked above, one line plus a trailing newline.
+const written = readFileSync(outPath, "utf8");
+if (written !== ENTRY + "\n") {
+  throw new Error("round-trip check failed: /output/entry.txt differs from the entry");
+}
 console.log(`Wrote ${chars} characters to ${outPath}`);
